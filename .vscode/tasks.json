@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "social: agent smoke test",
+      "type": "shell",
+      "command": "c:/python314/python.exe",
+      "args": [
+        "scripts/agent_smoke_test.py",
+        "--target",
+        "all"
+      ],
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}

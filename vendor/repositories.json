@@ -1,0 +1,28 @@
+{
+  "repositories": [
+    {
+      "name": "xhs-downloader",
+      "url": "https://github.com/JoeanAmier/XHS-Downloader.git",
+      "target": "vendor/XHS-Downloader",
+      "branch": "master",
+      "required": true,
+      "notes": "API-driven Xiaohongshu extraction core"
+    },
+    {
+      "name": "wechat-video-sniffer",
+      "url": "https://github.com/kanadeblisst00/WechatVideoSniffer2.0.git",
+      "target": "vendor/WechatVideoSniffer2.0",
+      "branch": "master",
+      "required": false,
+      "notes": "Windows-oriented WeChat Channels sniffing project"
+    },
+    {
+      "name": "wechat-sph-decrypt",
+      "url": "https://github.com/JohnABC/WechatSphDecrypt.git",
+      "target": "vendor/WechatSphDecrypt",
+      "branch": "main",
+      "required": true,
+      "notes": "Decrypt WeChat sph assets into playable media. The originally referenced Hanson repository is not publicly reachable now"
+    }
+  ]
+}

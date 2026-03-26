@@ -1,0 +1,83 @@
+name: social_media_ingestion
+display_name: Social Media Ingestion
+description: >-
+  处理飞书消息中的小红书与微信视频号链接，调用 social-ingestion-mcp，
+  返回 job_id 并轮询状态，任务完成后仅反馈摘要和结果状态，不回传长转写文本。
+version: 0.1.0
+triggers:
+  intent:
+    - 抓取小红书链接
+    - 解析小红书帖子
+    - 处理微信视频号链接
+    - 下载视频并转写
+  url_patterns:
+    - https://www.xiaohongshu.com/explore/*
+    - https://www.xiaohongshu.com/discovery/item/*
+    - https://xhslink.com/*
+    - https://channels.weixin.qq.com/*
+    - https://mp.weixin.qq.com/*
+inputs:
+  - name: source_url
+    type: string
+    required: true
+    description: 用户在飞书中发送的原始链接
+  - name: source_message_id
+    type: string
+    required: false
+    description: 飞书消息 ID，用于幂等、审计与回写关联
+  - name: desktop_node_id
+    type: string
+    required: false
+    default: local-desktop-node
+    description: 微信视频号任务的桌面节点标识
+tool_servers:
+  - name: social-ingestion-mcp
+    tools:
+      - submit_xhs_ingestion
+      - submit_wechat_channels_ingestion
+      - get_ingestion_job
+      - get_wechat_rpa_queue_state
+workflow:
+  - step: detect_platform
+    rule: >-
+      根据链接域名判断平台。命中 xiaohongshu.com 或 xhslink.com 时走 XHS；
+      命中 channels.weixin.qq.com 或 mp.weixin.qq.com 时走 WeChat Channels。
+  - step: submit_job
+    xiaohongshu:
+      tool: submit_xhs_ingestion
+      args:
+        source_url: "{{source_url}}"
+        source_message_id: "{{source_message_id}}"
+    wechat_channels:
+      tool: submit_wechat_channels_ingestion
+      args:
+        source_url: "{{source_url}}"
+        source_message_id: "{{source_message_id}}"
+        desktop_node_id: "{{desktop_node_id}}"
+  - step: acknowledge
+    message: >-
+      任务已提交，返回 job_id 与当前队列状态。若为微信视频号任务，提醒用户该链路为单线程桌面队列。
+  - step: poll_status
+    tool: get_ingestion_job
+    args:
+      job_id: "{{submit_job.job_id}}"
+    interval_seconds: 5
+    stop_when:
+      - succeeded
+      - failed
+      - cancelled
+  - step: final_reply
+    success_message: >-
+      数据处理完成。反馈 job_id、平台、状态、Bitable 记录 ID 和处理摘要，不带长正文。
+    failure_message: >-
+      数据处理失败。反馈 job_id、失败阶段、错误码，并建议稍后重试或切换桌面节点。
+guardrails:
+  - 不把 transcript_text 或 cleaned_text 大段注入 Agent 上下文。
+  - 仅在最终回复中给出状态摘要、record_id、媒体路径和必要错误码。
+  - 微信视频号任务提交前可选调用 get_wechat_rpa_queue_state，若队列繁忙则明确提示排队。
+  - 若任务失败且错误码为 rpa_focus_lost，提示检查微信 PC 窗口前台焦点与分辨率。
+examples:
+  - user: 帮我处理这个小红书链接 https://www.xiaohongshu.com/explore/abc123
+    assistant_action: 调用 submit_xhs_ingestion，返回 job_id，然后轮询 get_ingestion_job
+  - user: 抓这个视频号链接并写回飞书表
+    assistant_action: 调用 submit_wechat_channels_ingestion，必要时先读 get_wechat_rpa_queue_state

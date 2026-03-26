@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "social-ingestion-mcp"
+version = "0.1.0"
+description = "Cross-platform social media ingestion MCP server skeleton"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "anyio>=4.8.0",
+    "ffmpeg-python>=0.2.0",
+    "fastapi>=0.115.12",
+    "httpx>=0.28.1",
+    "lark-oapi>=1.4.19",
+    "mcp>=1.13.0",
+    "pydantic>=2.10.6",
+    "pydantic-settings>=2.7.1",
+    "pyautogui>=0.9.54",
+    "tenacity>=9.0.0",
+    "uvicorn>=0.34.0",
+]
+
+[project.optional-dependencies]
+stt = [
+    "openai-whisper>=20240930",
+]
+
+[project.scripts]
+social-ingestion-mcp = "social_ingestion_mcp.server:main"
+social-wechat-rpa-node = "social_ingestion_mcp.rpa_node.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/social_ingestion_mcp"]

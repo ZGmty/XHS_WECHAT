@@ -1,0 +1,26 @@
+{
+  "repositories": [
+    {
+      "name": "xhs-downloader",
+      "url": "https://github.com/JoeanAmier/XHS-Downloader.git",
+      "target": "E:\\Cross_platform_Social_Media_Automation_Collection_and_Cleaning_System\\vendor\\XHS-Downloader",
+      "branch": "master",
+      "commit": "a520e319ef95852498f9bc19b4c885155856960f"
+    },
+    {
+      "name": "wechat-video-sniffer",
+      "url": "https://github.com/kanadeblisst00/WechatVideoSniffer2.0.git",
+      "target": "E:\\Cross_platform_Social_Media_Automation_Collection_and_Cleaning_System\\vendor\\WechatVideoSniffer2.0",
+      "branch": "master",
+      "commit": "6659ad3efa35340143f0b39897910c80da3573e0"
+    },
+    {
+      "name": "wechat-sph-decrypt",
+      "url": "https://github.com/JohnABC/WechatSphDecrypt.git",
+      "target": "E:\\Cross_platform_Social_Media_Automation_Collection_and_Cleaning_System\\vendor\\WechatSphDecrypt",
+      "branch": "main",
+      "commit": "99a93fcc04342750be7fc7e894b1237624b63648"
+    }
+  ],
+  "failures": []
+}
